@@ -1,13 +1,9 @@
-// Remplacez les valeurs avec la configuration de votre application Web Firebase.
-// Cette configuration identifie le projet; ne collez JAMAIS une clé privée de compte de service ici.
-export const firebaseConfig = {
-  apiKey: "REMPLACER_API_KEY",
-  authDomain: "REMPLACER_PROJECT_ID.firebaseapp.com",
-  projectId: "REMPLACER_PROJECT_ID",
-  storageBucket: "REMPLACER_STORAGE_BUCKET",
-  messagingSenderId: "REMPLACER_MESSAGING_SENDER_ID",
-  appId: "REMPLACER_APP_ID"
+const firebaseConfig = {
+  apiKey: "AIzaSyCVuvXqvoU_m8XmrHUeM0SFiJXrds8IXQQ",
+  authDomain: "reseaucedar-7d818.firebaseapp.com",
+  databaseURL: "https://reseaucedar-7d818-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "reseaucedar-7d818",
+  storageBucket: "reseaucedar-7d818.firebasestorage.app",
+  messagingSenderId: "741620524129",
+  appId: "1:741620524129:web:445d3c957e244463fb7620"
 };
-// Collez ici l'UID Firebase de votre compte administrateur initial.
-// Le même UID doit être utilisé dans firestore.rules et storage.rules.
-export const ADMIN_UID = "REMPLACER_PAR_UID_ADMIN";
