@@ -7,4 +7,4 @@ export const firebaseConfig = {
   messagingSenderId: "741620524129",
   appId: "1:741620524129:web:445d3c957e244463fb7620"
 };
-export const ADMIN_UID = "";
+export const ADMIN_UID = "SUAO3JQ4z8SIRaaXxriPBkTH9P92";
