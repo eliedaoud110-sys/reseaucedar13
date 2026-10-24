@@ -1,0 +1,22 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() { return request.auth != null; }
+    function isBootstrapAdmin() { return signedIn() && request.auth.uid == 'REMPLACER_PAR_UID_ADMIN'; }
+    function isAdmin() { return isBootstrapAdmin() || (signedIn() && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin'); }
+    function canPost() { return isAdmin() || (signedIn() && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'enseignant'); }
+    match /attachments/{uid}/{fileName} {
+      allow read: if signedIn();
+      allow create: if canPost() && request.auth.uid == uid && request.resource.size < 20 * 1024 * 1024
+        && request.resource.contentType.matches('(application/pdf|application/msword|application/vnd\\..*|application/vnd.oasis.opendocument\\..*|image/.*|audio/mpeg|application/octet-stream)');
+      allow delete: if isAdmin();
+      allow update: if false;
+    }
+    match /voice/{uid}/{fileName} {
+      allow read: if signedIn();
+      allow create: if isAdmin() && request.auth.uid == uid && request.resource.size < 20 * 1024 * 1024;
+      allow delete: if isAdmin();
+      allow update: if false;
+    }
+  }
+}

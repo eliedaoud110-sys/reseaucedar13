@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    // Replace this value with the initial administrator's Firebase Authentication UID.
+    function isBootstrapAdmin() { return signedIn() && request.auth.uid == 'REMPLACER_PAR_UID_ADMIN'; }
+    function userRole() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role; }
+    function isAdmin() { return isBootstrapAdmin() || (signedIn() && userRole() == 'admin'); }
+    function canPost() { return isAdmin() || (signedIn() && userRole() == 'enseignant'); }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.role == 'pending';
+      allow update: if isAdmin();
+      allow delete: if isAdmin() && uid != request.auth.uid;
+    }
+
+    match /messages/{messageId} {
+      allow read: if signedIn();
+      allow create: if canPost()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.body is string
+        && request.resource.data.body.size() <= 3000
+        && request.resource.data.attachments is list
+        && request.resource.data.attachments.size() <= 10
+        && (isAdmin() || (!('externalLink' in request.resource.data) || request.resource.data.externalLink == null)
+                         && (!('voiceUrl' in request.resource.data) || request.resource.data.voiceUrl == null)
+                         && (!('voicePath' in request.resource.data) || request.resource.data.voicePath == null));
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}
